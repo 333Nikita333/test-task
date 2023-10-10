@@ -1,7 +1,12 @@
+import { FC } from "react";
 import "./App.css";
 
-function App() {
-  return <div>Application</div>;
-}
+const App: FC = () => {
+  return (
+    <div>
+      <p>Application</p>
+    </div>
+  );
+};
 
 export default App;
