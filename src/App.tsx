@@ -1,7 +1,6 @@
 import React, { FC, useState, useEffect, useRef, useCallback } from "react";
 import { CategoryType } from "./types";
 import CategoryList from "./components/CategoryList";
-import "./App.css";
 
 const App: FC = () => {
   const [categories, setCategories] = useState<CategoryType[]>([]);
