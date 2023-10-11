@@ -16,9 +16,18 @@ const App: FC = () => {
     x: 0,
     y: 0,
   });
+  const [scale, setScale] = useState(1);
   const categoryRef = useRef<HTMLDivElement | null>(null);
 
-  const handleDragStart = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleIncreaseScale = () => {
+    setScale(scale + 0.1);
+  };
+
+  const handleDecreaseScale = () => {
+    setScale(scale - 0.1);
+  };
+
+  const handleDragStart = (e: React.MouseEvent<HTMLDivElement>): void => {
     setDragging(true);
     const rect = categoryRef.current?.getBoundingClientRect();
     if (rect) {
@@ -29,12 +38,12 @@ const App: FC = () => {
     }
   };
 
-  const handleDragEnd = () => {
+  const handleDragEnd = (): void => {
     setDragging(false);
   };
 
   const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
+    (e: MouseEvent): void => {
       if (dragging && categoryRef.current) {
         const newX = e.clientX - dragOffset.x;
         const newY = e.clientY - dragOffset.y;
@@ -54,7 +63,7 @@ const App: FC = () => {
     };
   }, [dragging, handleMouseMove]);
 
-  const handleAddCategory = () => {
+  const handleAddCategory = (): void => {
     if (newCategory.trim() !== "") {
       const newCategoryData: CategoryType = {
         name: newCategory,
@@ -76,16 +85,23 @@ const App: FC = () => {
     }
   };
 
-  const handleCancelCategory = () => {
+  const handleCancelCategory = (): void => {
     setIsCancelingCategory(true);
     setIsCreatingCategory(false);
   };
 
-  const handleDeleteCategory = (categoryToDelete: CategoryType) => {
-    const updatedCategories = categories.filter(
-      (category) => category !== categoryToDelete
+  const handleDeleteCategory = (categoryToDelete: CategoryType): void => {
+    const deleteCategoryRecursively = (categoryArray: CategoryType[]) => {
+      categoryArray = categoryArray.filter((item) => item !== categoryToDelete);
+      categoryArray.forEach((item) => {
+        item.subCategories = deleteCategoryRecursively(item.subCategories);
+      });
+      return categoryArray;
+    };
+
+    setCategories((prevCategories) =>
+      deleteCategoryRecursively(prevCategories)
     );
-    setCategories(updatedCategories);
   };
 
   return (
@@ -94,11 +110,12 @@ const App: FC = () => {
         className="categoriesWrapper"
         ref={categoryRef}
         onMouseDown={handleDragStart}
+        style={{ transform: `scale(${scale})` }}
       >
         <div className="mainContainer">
           <p>Categories</p>
           <button onClick={() => setIsCreatingCategory(true)}>
-            Add Category
+            <span>+</span>
           </button>
         </div>
 
@@ -112,6 +129,13 @@ const App: FC = () => {
           handleCancelCategory={handleCancelCategory}
           handleDeleteCategory={handleDeleteCategory}
         />
+      </div>
+      <div className="scale-buttons">
+        <button onClick={handleIncreaseScale}>+</button>
+        <div className="scale-value">
+          {parseFloat((scale * 100).toFixed(2))}%
+        </div>
+        <button onClick={handleDecreaseScale}>-</button>
       </div>
     </div>
   );

@@ -1,16 +1,16 @@
-import { FC, useState } from "react";
+import { FC, Dispatch, SetStateAction, useState } from "react";
 import { CategoryType } from "../types";
 
 interface CategoryItemProps {
   category: CategoryType;
-  setCreatingCategory: React.Dispatch<
-    React.SetStateAction<CategoryType | null>
-  >;
+  categories: CategoryType[];
+  setCreatingCategory: Dispatch<SetStateAction<CategoryType | null>>;
   onDeleteCategory: (categoryToDelete: CategoryType) => void;
 }
 
 const CategoryItem: FC<CategoryItemProps> = ({
   category,
+  categories,
   setCreatingCategory,
   onDeleteCategory,
 }) => {
@@ -22,7 +22,7 @@ const CategoryItem: FC<CategoryItemProps> = ({
     category.name
   );
 
-  const handleAddSubCategory = () => {
+  const handleAddSubCategory = (): void => {
     if (newSubCategory.trim() !== "") {
       category.subCategories.push({
         name: newSubCategory,
@@ -33,25 +33,25 @@ const CategoryItem: FC<CategoryItemProps> = ({
     }
   };
 
-  const handleCancelSubCategory = () => {
+  const handleCancelSubCategory = (): void => {
     setIsCreatingSubCategory(false);
   };
 
-  const handleEditCategory = () => {
+  const handleEditCategory = (): void => {
     setIsEditingCategory(true);
   };
 
-  const handleSaveCategory = () => {
+  const handleSaveCategory = (): void => {
     category.name = editedCategoryName;
     setIsEditingCategory(false);
   };
 
-  const handleCancelEditCategory = () => {
+  const handleCancelEditCategory = (): void => {
     setIsEditingCategory(false);
     setEditedCategoryName(category.name);
   };
 
-  const handleDeleteCategory = () => {
+  const handleDeleteCategory = (): void => {
     onDeleteCategory(category);
   };
 
@@ -64,29 +64,31 @@ const CategoryItem: FC<CategoryItemProps> = ({
             value={editedCategoryName}
             onChange={(e) => setEditedCategoryName(e.target.value)}
           />
-          <button className="editButton" onClick={handleSaveCategory}>
-            Save
-          </button>
-          <button className="cancelButton" onClick={handleCancelEditCategory}>
-            Cancel
-          </button>
+          <div className="buttonsAddCategory">
+            <button className="editButton" onClick={handleSaveCategory}>
+              👍
+            </button>
+            <button className="cancelButton" onClick={handleCancelEditCategory}>
+              👎
+            </button>
+          </div>
         </div>
       ) : (
         <div className="subcategoryItem">
+          <p className="subcategoryName">{category.name}</p>
           <div className="buttons">
-            <p className="subcategoryName">{category.name}</p>
             <button className="editButton" onClick={handleEditCategory}>
-              Edit
+              <span>...</span>
             </button>
             <button className="deleteButton" onClick={handleDeleteCategory}>
-              Delete
+              <span>x</span>
             </button>
             {!isCreatingSubCategory && (
               <button
-                className="AddCategoryButton"
+                className="addCategoryButton"
                 onClick={() => setIsCreatingSubCategory(true)}
               >
-                Add Subcategory
+                <span>+</span>
               </button>
             )}
           </div>
@@ -99,27 +101,25 @@ const CategoryItem: FC<CategoryItemProps> = ({
             value={newSubCategory}
             onChange={(e) => setNewSubCategory(e.target.value)}
           />
-          <button className="AddCategoryButton" onClick={handleAddSubCategory}>
-            Add
-          </button>
-          <button
-            className="AddCategoryButton"
-            onClick={handleCancelSubCategory}
-          >
-            Cancel
-          </button>
+          <div className="buttonsAddCategory">
+            <button onClick={handleAddSubCategory}>👍</button>
+            <button onClick={handleCancelSubCategory}>👎</button>
+          </div>
         </div>
       )}
-      <div className="subCategories">
-        {category.subCategories.map((subCategory, index) => (
-          <CategoryItem
-            key={index}
-            category={subCategory}
-            setCreatingCategory={setCreatingCategory}
-            onDeleteCategory={onDeleteCategory}
-          />
-        ))}
-      </div>
+      {categories.length > 0 && (
+        <div className="subCategories">
+          {category.subCategories.map((subCategory, index) => (
+            <CategoryItem
+              key={index}
+              category={subCategory}
+              categories={categories}
+              setCreatingCategory={setCreatingCategory}
+              onDeleteCategory={onDeleteCategory}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

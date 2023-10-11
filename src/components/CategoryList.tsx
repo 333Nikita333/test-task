@@ -30,6 +30,7 @@ const CategoryList: FC<CategoryListProps> = ({
         <CategoryItem
           key={index}
           category={category}
+          categories={categories}
           setCreatingCategory={setCreatingCategory}
           onDeleteCategory={handleDeleteCategory}
         />

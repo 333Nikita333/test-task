@@ -21,8 +21,10 @@ const CategoryAddForm: FC<CategoryAddFormProps> = ({
         value={newCategory}
         onChange={(e) => setNewCategory(e.target.value)}
       />
-      <button onClick={handleAddCategory}>Add</button>
-      <button onClick={handleCancelCategory}>Cancel</button>
+      <div className="buttonsAddCategory">
+        <button onClick={handleAddCategory}>👍</button>
+        <button onClick={handleCancelCategory}>👎</button>
+      </div>
     </div>
   );
 };
