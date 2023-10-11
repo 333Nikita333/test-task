@@ -31,6 +31,7 @@ input {
 }
 .scale-value {
   width: 50px;
+  text-align: center;
 }
 .categoriesWrapper {
   position: absolute;
